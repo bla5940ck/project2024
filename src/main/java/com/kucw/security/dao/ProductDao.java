@@ -18,4 +18,17 @@ public interface ProductDao {
      * @return Integer
      **/
     Integer createProduct(ProductRequest productRequest);
+
+    /**
+     * 更新商品
+     * @param  productId
+     * @param productRequest
+     **/
+    void updateProduct(Integer productId, ProductRequest productRequest);
+
+    /**
+     * 刪除商品
+     * @param  productId
+     **/
+    void deleteProduct(Integer productId);
 }

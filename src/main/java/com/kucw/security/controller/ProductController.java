@@ -37,6 +37,31 @@ public class ProductController {
         } else {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).build();
         }
+    }
 
+    @PutMapping("/products/{productId}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Integer productId, @RequestBody @Valid ProductRequest productRequest) {
+
+        // 驗證 product 是否存在
+        Product oldProduct = productService.getProductById(productId);
+        if (oldProduct == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        // 修改商品數據
+        productService.updateProduct(productId, productRequest);
+
+        Product product = productService.getProductById(productId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(product);
+    }
+
+    @DeleteMapping("/products/{productId}")
+    public ResponseEntity<?> deleteProduct(@PathVariable Integer productId) {
+
+        productService.deleteProduct(productId);
+
+        // 對刪除API而言，前端只需要知道刪除不在
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
