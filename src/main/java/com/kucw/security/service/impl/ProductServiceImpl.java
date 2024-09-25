@@ -1,6 +1,7 @@
 package com.kucw.security.service.impl;
 
 import com.kucw.security.dao.ProductDao;
+import com.kucw.security.dto.ProductRequest;
 import com.kucw.security.model.product.Product;
 import com.kucw.security.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,5 +16,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product getProductById(Integer productId) {
         return productDao.getProductById(productId);
+    }
+
+    @Override
+    public Integer createProduct(ProductRequest productRequest) {
+        return productDao.createProduct(productRequest);
     }
 }

@@ -1,40 +1,27 @@
-package com.kucw.security.model.product;
+package com.kucw.security.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kucw.security.constant.ProductCategory;
+import jakarta.validation.constraints.NotNull;
 
-import java.sql.Timestamp;
-import java.util.Date;
+public class ProductRequest {
 
-public class Product {
-
-    private Integer productId;
-
+    @NotNull
     private String productName;
 
+    @NotNull
     private ProductCategory category;
 
+    @NotNull
     private String imageUrl;
 
+    @NotNull
     private Integer price;
 
+    @NotNull
     private Integer stock;
 
     private String description;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Taipei")
-    private Date createdDate;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Taipei")
-    private Date lastModifiedDate;
-
-    public Integer getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Integer productId) {
-        this.productId = productId;
-    }
 
     public String getProductName() {
         return productName;
@@ -82,21 +69,5 @@ public class Product {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(Timestamp lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
     }
 }

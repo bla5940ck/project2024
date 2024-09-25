@@ -1,5 +1,6 @@
 package com.kucw.security.dao;
 
+import com.kucw.security.dto.ProductRequest;
 import com.kucw.security.model.product.Product;
 
 public interface ProductDao {
@@ -10,4 +11,11 @@ public interface ProductDao {
      * @return Product
      **/
     Product getProductById(Integer productId);
+
+    /**
+     * 新增商品
+     * @param productRequest
+     * @return Integer
+     **/
+    Integer createProduct(ProductRequest productRequest);
 }
