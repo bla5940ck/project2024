@@ -34,19 +34,20 @@ public class MySecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         return http
-//                .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
-                .csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .csrfTokenRequestHandler(createCsrfHandler())
-                        // csrf 忽略register,index
-                        .ignoringRequestMatchers("/register", "/index", "/"))
+                .csrf(csrf -> csrf.disable())
+//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+//                .csrf(csrf -> csrf
+//                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//                        .csrfTokenRequestHandler(createCsrfHandler())
+//                        // csrf 忽略register,index
+//                        .ignoringRequestMatchers("/register", "/index", "/"))
                 .httpBasic(Customizer.withDefaults() )
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/register", "/index", "/").permitAll()
-                        .requestMatchers("/hello","order").authenticated()
-                        .requestMatchers("/welcome").hasAnyRole("ADMIN", "VIP_MEMBER")
-                        .anyRequest().denyAll()
+//                        .requestMatchers("/register", "/index", "/").permitAll()
+//                        .requestMatchers("/hello","order").authenticated()
+//                        .requestMatchers("/welcome").hasAnyRole("ADMIN", "VIP_MEMBER")
+//                        .anyRequest().denyAll
+                        .anyRequest().permitAll()
                 )
 
                 // 表單登入（即是使用帳號密碼登入）
