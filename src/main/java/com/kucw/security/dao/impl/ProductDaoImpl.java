@@ -1,9 +1,12 @@
 package com.kucw.security.dao.impl;
 
+import com.kucw.security.constant.ProductCategory;
 import com.kucw.security.dao.ProductDao;
+import com.kucw.security.dto.ProductQueryParams;
 import com.kucw.security.dto.ProductRequest;
 import com.kucw.security.model.product.Product;
 import com.kucw.security.rowmapper.ProductRowMapper;
+import com.mysql.cj.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -110,5 +113,63 @@ public class ProductDaoImpl implements ProductDao {
 
         namedParameterJdbcTemplate.update(sql, map);
 
+    }
+
+    @Override
+    public List<Product> getProducts(ProductQueryParams productQueryParams) {
+
+        String sql = """
+               SELECT product_id, product_name, category, image_url, price, stock, description, created_date, last_modified_date
+               FROM product
+               WHERE 1 = 1 
+                """;
+
+        Map<String, Object> map = new HashMap<>();
+
+        // 查詢條件
+        sql = getCondition(productQueryParams, sql, map);
+
+        // 排序
+        sql += " ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSort();
+
+        // 分頁
+        sql += " LIMIT :limit OFFSET :offset";
+        map.put("limit", productQueryParams.getLimit());
+        map.put("offset", productQueryParams.getOffset());
+
+        List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
+
+        return productList;
+    }
+
+
+    // 條件取得
+    private String getCondition(ProductQueryParams productQueryParams, String sql, Map<String, Object> map) {
+        // 商品類型條件
+        if (productQueryParams.getCategory() != null) {
+            sql += " AND category = :category";
+            map.put("category", productQueryParams.getCategory().name());
+        }
+        // 搜尋框條件
+        if (!StringUtils.isNullOrEmpty(productQueryParams.getSearch())) {
+            sql += " AND product_name LIKE :product";
+            map.put("product", "%" + productQueryParams.getSearch() + "%");
+        }
+        return sql;
+    }
+
+    @Override
+    public Integer countProduct(ProductQueryParams productQueryParams) {
+
+        String sql = "SELECT count(*) FROM product WHERE 1=1";
+
+        Map<String, Object> map = new HashMap<>();
+
+        // 條件查詢
+        sql = getCondition(productQueryParams, sql, map);
+
+        Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
+
+        return total;
     }
 }
