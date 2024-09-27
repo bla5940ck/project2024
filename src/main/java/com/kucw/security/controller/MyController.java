@@ -21,4 +21,9 @@ public class MyController {
     public String welcome() {
         return "Welcome!";
     }
+
+    @PostMapping("/vipUrl")
+    public String vip() {
+        return "vip";
+    }
 }

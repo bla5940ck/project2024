@@ -52,9 +52,13 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-aop:6.0.13" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-config:6.1.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-web:6.1.5" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-oauth2-client:3.1.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.springframework.security:spring-security-test:6.1.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-core:6.1.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-crypto:6.1.5" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-core:6.0.13" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-jcl:6.0.13" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-test:6.0.13" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-oauth2-client:3.1.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-oauth2-client:6.1.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-oauth2-core:6.1.5" level="project" />
     <orderEntry type="library" name="Maven: com.nimbusds:oauth2-oidc-sdk:9.43.3" level="project" />
@@ -97,9 +101,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-junit-jupiter:5.3.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.skyscreamer:jsonassert:1.5.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.vaadin.external.google:android-json:0.0.20131108.vaadin1" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-core:6.0.13" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-jcl:6.0.13" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-test:6.0.13" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.xmlunit:xmlunit-core:2.9.1" level="project" />
   </component>
 </module>
