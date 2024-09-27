@@ -1,6 +1,6 @@
 package com.kucw.security.rowmapper;
 
-import com.kucw.security.model.Role;
+import com.kucw.security.model.role.Role;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 

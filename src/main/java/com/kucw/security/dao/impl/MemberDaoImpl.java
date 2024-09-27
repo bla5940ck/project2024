@@ -1,9 +1,9 @@
 package com.kucw.security.dao.impl;
 
 import com.kucw.security.dao.MemberDao;
-import com.kucw.security.model.Member;
-import com.kucw.security.model.OAuth2Member;
-import com.kucw.security.model.Role;
+import com.kucw.security.dto.MemberRegisterRequest;
+import com.kucw.security.model.member.Member;
+import com.kucw.security.model.role.Role;
 import com.kucw.security.rowmapper.MemberRowMapper;
 import com.kucw.security.rowmapper.RoleRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class MemberDaoImpl implements MemberDao {
     @Override
     public Member getMemberByEmail(String email) {
         String sql = """
-                SELECT member_id, email, name, age, password  
+                SELECT member_id, email, name, age, password, created_date, last_modified_date  
                 FROM member
                 WHERE email = :email
                 """;
@@ -51,21 +52,24 @@ public class MemberDaoImpl implements MemberDao {
     }
 
     @Override
-    public Integer createMember(Member member) {
+    public Integer createMember(MemberRegisterRequest memberRegisterRequest) {
 
         // SQL
-        String sql = "INSERT INTO member (email, password, age, name) VALUES (:email, :password, :age, :name)";
+        String sql = "INSERT INTO member (email, password, age, name, created_date, last_modified_date) VALUES (:email, :password, :age, :name, :createdDate, :lastModifiedDate)";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("email", member.getEmail());
-        params.addValue("password", member.getPassword());
-        params.addValue("age", member.getAge());
-        params.addValue("name", member.getName());
+        params.addValue("email", memberRegisterRequest.getEmail());
+        params.addValue("password", memberRegisterRequest.getPassword());
+        params.addValue("age", memberRegisterRequest.getAge());
+        params.addValue("name", memberRegisterRequest.getName());
+        Date now = new Date();
+        params.addValue("createdDate", now);
+        params.addValue("lastModifiedDate", now);
 
         // 用来存储生成的主鍵
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        namedParameterJdbcTemplate.update(sql, params, keyHolder, new String[]{"member_id"});
+        namedParameterJdbcTemplate.update(sql, params, keyHolder);
         int memberId = keyHolder.getKey().intValue();
 
         return memberId;
@@ -75,7 +79,7 @@ public class MemberDaoImpl implements MemberDao {
     @Override
     public Member getMemberById(Integer memberId) {
         String sql = """
-                SELECT member_id, email, name, age, password  
+                SELECT member_id, email, name, age, password, created_date, last_modified_date  
                 FROM member
                 WHERE member_id = :memberId
                 """;

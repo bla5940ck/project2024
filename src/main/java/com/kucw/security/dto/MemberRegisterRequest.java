@@ -1,32 +1,21 @@
-package com.kucw.security.model;
+package com.kucw.security.dto;
 
-public class Member {
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
-    private Integer memberId;
+public class MemberRegisterRequest {
 
+    @NotBlank
+    @Email
     private String email;
 
     private String age;
 
+    @NotBlank
     private String password;
 
+    @NotBlank
     private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getMemberId() {
-        return memberId;
-    }
-
-    public void setMemberId(Integer memberId) {
-        this.memberId = memberId;
-    }
 
     public String getEmail() {
         return email;
@@ -50,5 +39,13 @@ public class Member {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

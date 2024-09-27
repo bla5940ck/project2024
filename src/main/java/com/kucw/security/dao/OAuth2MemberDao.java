@@ -1,6 +1,6 @@
 package com.kucw.security.dao;
 
-import com.kucw.security.model.OAuth2Member;
+import com.kucw.security.model.member.OAuth2Member;
 
 public interface OAuth2MemberDao {
 

@@ -1,4 +1,4 @@
-package com.kucw.security.model;
+package com.kucw.security.model.role;
 
 public class Role {
 

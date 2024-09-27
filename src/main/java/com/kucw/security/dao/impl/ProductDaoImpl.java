@@ -1,6 +1,5 @@
 package com.kucw.security.dao.impl;
 
-import com.kucw.security.constant.ProductCategory;
 import com.kucw.security.dao.ProductDao;
 import com.kucw.security.dto.ProductQueryParams;
 import com.kucw.security.dto.ProductRequest;

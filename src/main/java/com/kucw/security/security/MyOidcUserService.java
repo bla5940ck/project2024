@@ -1,7 +1,7 @@
 package com.kucw.security.security;
 
 import com.kucw.security.dao.OAuth2MemberDao;
-import com.kucw.security.model.OAuth2Member;
+import com.kucw.security.model.member.OAuth2Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;

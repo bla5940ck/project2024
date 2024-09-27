@@ -1,6 +1,6 @@
 package com.kucw.security.rowmapper;
 
-import com.kucw.security.model.OAuth2Member;
+import com.kucw.security.model.member.OAuth2Member;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 

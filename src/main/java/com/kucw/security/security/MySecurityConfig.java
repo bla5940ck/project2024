@@ -40,18 +40,19 @@ public class MySecurityConfig {
 //                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 //                        .csrfTokenRequestHandler(createCsrfHandler())
 //                        // csrf 忽略register,index
-//                        .ignoringRequestMatchers("/register", "/index", "/"))
+//                        .ignoringRequestMatchers("/members/register", "/index", "/")
+//                        )
                 .httpBasic(Customizer.withDefaults() )
                 .authorizeHttpRequests(request -> request
-//                        .requestMatchers("/register", "/index", "/").permitAll()
-//                        .requestMatchers("/hello","order").authenticated()
-//                        .requestMatchers("/welcome").hasAnyRole("ADMIN", "VIP_MEMBER")
-//                        .anyRequest().denyAll
-                        .anyRequest().permitAll()
+                        .requestMatchers("/members/register", "/products").permitAll()
+                        .requestMatchers("/welcome", "/products/*").hasAnyRole("ADMIN", "VIP_MEMBER", "NORMAL_MEMBER")
+                        .anyRequest().denyAll()
+//                        .anyRequest().permitAll()
                 )
 
                 // 表單登入（即是使用帳號密碼登入）
                 .formLogin(Customizer.withDefaults())
+
 
                 // OAuth 2.0 社交登入
                 .oauth2Login(oauth2 -> oauth2

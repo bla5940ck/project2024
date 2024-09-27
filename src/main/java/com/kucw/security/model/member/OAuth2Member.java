@@ -1,4 +1,4 @@
-package com.kucw.security.model;
+package com.kucw.security.model.member;
 
 import java.util.Date;
 

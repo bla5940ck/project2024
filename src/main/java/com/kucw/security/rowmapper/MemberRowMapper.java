@@ -1,6 +1,6 @@
 package com.kucw.security.rowmapper;
 
-import com.kucw.security.model.Member;
+import com.kucw.security.model.member.Member;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +18,8 @@ public class MemberRowMapper implements RowMapper<Member> {
         member.setEmail(resultSet.getString("email"));
         member.setPassword(resultSet.getString("password"));
         member.setName(resultSet.getString("name"));
+        member.setCreatedDate(resultSet.getTimestamp("created_date"));
+        member.setLastModifiedDate(resultSet.getTimestamp("last_modified_date"));
         return member;
     }
 }

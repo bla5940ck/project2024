@@ -1,8 +1,8 @@
 package com.kucw.security.security;
 
 import com.kucw.security.dao.MemberDao;
-import com.kucw.security.model.Member;
-import com.kucw.security.model.Role;
+import com.kucw.security.model.member.Member;
+import com.kucw.security.model.role.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
