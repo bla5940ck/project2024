@@ -4,11 +4,13 @@ import com.kucw.security.dao.OrderDao;
 import com.kucw.security.dao.ProductDao;
 import com.kucw.security.dto.BuyItem;
 import com.kucw.security.dto.CreateOrderRequest;
+import com.kucw.security.dto.OrderQueryParams;
 import com.kucw.security.dto.ProductRequest;
 import com.kucw.security.model.order.Order;
 import com.kucw.security.model.order.OrderItem;
 import com.kucw.security.model.product.Product;
 import com.kucw.security.service.OrderService;
+import com.kucw.security.util.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,14 +85,6 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
-    private void updateStock(BuyItem buyItem, Product product) {
-        int stock = product.getStock() - buyItem.getQuantity();
-        product.setStock(stock);
-        ProductRequest productRequest = getProductRequest(product);
-        productDao.updateProduct(product.getProductId(), productRequest);
-    }
-
-
     @Override
     public Order getOrderById(Integer orderId) {
 
@@ -105,6 +99,37 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return order;
+    }
+
+    @Override
+    public Page<Order> getOrderList(OrderQueryParams orderQueryParams) {
+        List<Order> orderList = orderDao.getOrders(orderQueryParams);
+
+        if (!CollectionUtils.isEmpty(orderList)) {
+            for (Order order : orderList) {
+                // 查詢訂單詳細
+                List<OrderItem> orderItemList = orderDao.getOrderItemListByOrderId(order.getOrderId());
+                order.setOrderItemList(orderItemList);
+            }
+        }
+
+        // 取得訂單數量
+        Integer totalQuantity = orderDao.countOrder(orderQueryParams);
+
+        Page<Order> page = new Page<>();
+        page.setDataList(orderList);
+        page.setTotal(totalQuantity);
+        page.setLimit(orderQueryParams.getLimit());
+        page.setOffset(orderQueryParams.getOffset());
+
+        return page;
+    }
+
+    private void updateStock(BuyItem buyItem, Product product) {
+        int stock = product.getStock() - buyItem.getQuantity();
+        product.setStock(stock);
+        ProductRequest productRequest = getProductRequest(product);
+        productDao.updateProduct(product.getProductId(), productRequest);
     }
 
     private ProductRequest getProductRequest(Product product) {

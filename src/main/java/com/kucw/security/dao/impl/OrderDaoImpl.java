@@ -2,6 +2,7 @@ package com.kucw.security.dao.impl;
 
 import com.kucw.security.dao.OrderDao;
 import com.kucw.security.dto.CreateOrderRequest;
+import com.kucw.security.dto.OrderQueryParams;
 import com.kucw.security.model.order.Order;
 import com.kucw.security.model.order.OrderItem;
 import com.kucw.security.rowmapper.OrderItemRowMapper;
@@ -111,5 +112,57 @@ public class OrderDaoImpl implements OrderDao {
         List<OrderItem> orderItemList = namedParameterJdbcTemplate.query(sql, map, new OrderItemRowMapper());
 
         return orderItemList;
+    }
+
+    @Override
+    public List<Order> getOrders(OrderQueryParams orderQueryParams) {
+
+        String sql = """
+                SELECT order_Id, member_id, total_amount, created_date, last_modified_date 
+                FROM `order`
+                WHERE 1=1
+                """;
+
+        Map<String, Object> map = new HashMap<>();
+
+        // 條件
+        sql = getCondition(orderQueryParams, sql, map);
+
+        // 排序
+        sql = sql + " ORDER BY created_date DESC";
+
+        // 分頁
+        sql = sql + " LIMIT :limit OFFSET :offset";
+        map.put("limit", orderQueryParams.getLimit());
+        map.put("offset", orderQueryParams.getOffset());
+
+        List<Order> orderList = namedParameterJdbcTemplate.query(sql, map, new OrderRowMapper());
+
+        return orderList;
+    }
+
+    @Override
+    public Integer countOrder(OrderQueryParams orderQueryParams) {
+        String sql = """
+                SELECT count(*)
+                FROM `order`
+                WHERE 1=1
+                """;
+
+        Map<String, Object> map = new HashMap<>();
+
+        sql = getCondition(orderQueryParams, sql, map);
+
+        Integer count = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
+
+        return count;
+    }
+
+    private String getCondition(OrderQueryParams orderQueryParams, String sql, Map<String, Object> map) {
+        if (orderQueryParams.getMemberId() != null) {
+            sql += " AND member_id = :memberId";
+            map.put("memberId", orderQueryParams.getMemberId());
+        }
+        return sql;
     }
 }

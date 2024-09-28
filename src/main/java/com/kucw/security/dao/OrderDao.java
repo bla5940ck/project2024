@@ -1,6 +1,7 @@
 package com.kucw.security.dao;
 
 import com.kucw.security.dto.CreateOrderRequest;
+import com.kucw.security.dto.OrderQueryParams;
 import com.kucw.security.model.order.Order;
 import com.kucw.security.model.order.OrderItem;
 
@@ -32,4 +33,16 @@ public interface OrderDao {
      * @param orderId
      * */
     List<OrderItem> getOrderItemListByOrderId(Integer orderId);
+
+
+    /** 查詢訂單清單
+     * @param orderQueryParams
+     * */
+    List<Order> getOrders(OrderQueryParams orderQueryParams);
+
+    /**
+     * 取得訂單數量
+     * @param queryParams
+     * */
+    Integer countOrder(OrderQueryParams queryParams);
 }

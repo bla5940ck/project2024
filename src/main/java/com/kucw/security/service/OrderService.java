@@ -1,7 +1,11 @@
 package com.kucw.security.service;
 
 import com.kucw.security.dto.CreateOrderRequest;
+import com.kucw.security.dto.OrderQueryParams;
 import com.kucw.security.model.order.Order;
+import com.kucw.security.util.Page;
+
+import java.util.List;
 
 public interface OrderService {
 
@@ -17,4 +21,7 @@ public interface OrderService {
      * @param orderId
      * */
     Order getOrderById(Integer orderId);
+
+    /** 取得訂單清單(分頁) */
+    Page<Order> getOrderList(OrderQueryParams orderQueryParams);
 }
