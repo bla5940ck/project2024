@@ -4,12 +4,14 @@ import com.kucw.security.dao.OrderDao;
 import com.kucw.security.dao.ProductDao;
 import com.kucw.security.dto.BuyItem;
 import com.kucw.security.dto.CreateOrderRequest;
+import com.kucw.security.model.order.Order;
 import com.kucw.security.model.order.OrderItem;
 import com.kucw.security.model.product.Product;
 import com.kucw.security.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,5 +58,21 @@ public class OrderServiceImpl implements OrderService {
 
         return orderId;
 
+    }
+
+    @Override
+    public Order getOrderById(Integer orderId) {
+
+        // 1.取得訂單
+        Order order = orderDao.getOrderById(orderId);
+
+        // 2.取得訂單細項清單
+        List<OrderItem> orderItemList = orderDao.getOrderItemListByOrderId(orderId);
+
+        if (!CollectionUtils.isEmpty(orderItemList)) {
+            order.setOrderItemList(orderItemList);
+        }
+
+        return order;
     }
 }

@@ -2,13 +2,17 @@ package com.kucw.security.dao.impl;
 
 import com.kucw.security.dao.OrderDao;
 import com.kucw.security.dto.CreateOrderRequest;
+import com.kucw.security.model.order.Order;
 import com.kucw.security.model.order.OrderItem;
+import com.kucw.security.rowmapper.OrderItemRowMapper;
+import com.kucw.security.rowmapper.OrderRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -67,5 +71,45 @@ public class OrderDaoImpl implements OrderDao {
 
         namedParameterJdbcTemplate.batchUpdate(sql, parameterSources);
 
+    }
+
+    @Override
+    public Order getOrderById(Integer orderId) {
+
+        String sql = """
+                SELECT order_Id, member_id, total_amount, created_date, last_modified_date  
+                FROM `order` 
+                WHERE order_id = :orderId               
+                """;
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("orderId", orderId);
+
+        List<Order> orderList = namedParameterJdbcTemplate.query(sql, map, new OrderRowMapper());
+
+        if (!CollectionUtils.isEmpty(orderList)) {
+            return orderList.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public List<OrderItem> getOrderItemListByOrderId(Integer orderId) {
+
+        String sql = """
+                SELECT oi.order_item_id, oi.order_id, oi.product_id, oi.quantity, oi.amount, p.product_name, p.image_url
+                FROM order_item oi 
+                JOIN product p
+                ON oi.product_id = p.product_id
+                WHERE oi.order_id = :orderId
+                """;
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("orderId", orderId);
+
+        List<OrderItem> orderItemList = namedParameterJdbcTemplate.query(sql, map, new OrderItemRowMapper());
+
+        return orderItemList;
     }
 }

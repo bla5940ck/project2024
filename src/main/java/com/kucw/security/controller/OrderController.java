@@ -1,6 +1,7 @@
 package com.kucw.security.controller;
 
 import com.kucw.security.dto.CreateOrderRequest;
+import com.kucw.security.model.order.Order;
 import com.kucw.security.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,13 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping("/members/{memberId}/orders")
-    public ResponseEntity<?> createOrder(@PathVariable Integer memberId,
+    public ResponseEntity<Order> createOrder(@PathVariable Integer memberId,
                                          @RequestBody @Valid CreateOrderRequest createOrderRequest) {
 
         Integer orderId = orderService.createOrder(memberId, createOrderRequest);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderId);
+        Order order = orderService.getOrderById(orderId);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(order);
     }
 }
