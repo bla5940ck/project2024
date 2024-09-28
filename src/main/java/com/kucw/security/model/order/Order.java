@@ -1,5 +1,7 @@
 package com.kucw.security.model.order;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 import java.util.List;
 
@@ -8,7 +10,10 @@ public class Order {
     private Integer orderId;
     private Integer memberId;
     private Integer totalAmount;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Taipei")
     private Date createdDate;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Taipei")
     private Date lastModifiedDate;
 
     private List<OrderItem> orderItemList;
