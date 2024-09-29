@@ -1,7 +1,6 @@
 package com.kucw.security.dao.impl;
 
 import com.kucw.security.dao.OrderDao;
-import com.kucw.security.dto.CreateOrderRequest;
 import com.kucw.security.dto.OrderQueryParams;
 import com.kucw.security.model.order.Order;
 import com.kucw.security.model.order.OrderItem;
