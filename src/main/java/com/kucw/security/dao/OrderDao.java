@@ -5,6 +5,7 @@ import com.kucw.security.dto.OrderQueryParams;
 import com.kucw.security.model.order.Order;
 import com.kucw.security.model.order.OrderItem;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface OrderDao {
@@ -14,7 +15,7 @@ public interface OrderDao {
      * @param memberId
      * @param totalAmount
      * */
-    Integer createOrder(Integer memberId, Integer totalAmount);
+    Integer createOrder(Integer memberId, BigDecimal totalAmount);
 
 
     /**

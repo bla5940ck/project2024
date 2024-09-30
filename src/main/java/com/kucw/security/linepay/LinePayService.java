@@ -1,46 +1,50 @@
 package com.kucw.security.linepay;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kucw.security.dto.BuyItem;
 import com.kucw.security.linepay.model.*;
+import com.kucw.security.model.order.OrderItem;
 import com.kucw.security.util.PostApiUtil;
 import com.kucw.security.util.model.LinePayData;
 import org.apache.commons.codec.digest.HmacAlgorithms;
 import org.apache.commons.codec.digest.HmacUtils;
-import java.util.Base64;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.UUID;
+import java.util.*;
 
-public class CustomerCheck {
-
-    public static void main(String[] args) {
-
+@Component
+public class LinePayService {
+    public String requestPayment(Integer orderId, BigDecimal totalAmount, Integer memberId, List<OrderItem> orderItemList) {
         // Request API
         CheckoutPaymentRequestForm form = new CheckoutPaymentRequestForm();
-        form.setAmount(new BigDecimal("100"));
+        form.setAmount(totalAmount.setScale(0));
         form.setCurrency("TWD");
-        form.setOrderId("merchant_order_id1235");
+        form.setOrderId(String.valueOf(orderId));
 
         ProductPackageForm productPackageForm = new ProductPackageForm();
         productPackageForm.setId("package_id");
-        productPackageForm.setName("shop_name");
-        productPackageForm.setAmount(new BigDecimal("100"));
+        productPackageForm.setName("陳小小之家");
+        productPackageForm.setAmount(totalAmount.setScale(0));
 
+        List<ProductForm> productFormList = new ArrayList<>();
+        for (OrderItem orderItem : orderItemList) {
+            ProductForm productForm = new ProductForm();
+            productForm.setId(String.valueOf(orderItem.getProductId()));
+            productForm.setName(orderItem.getProductName());
+            productForm.setImageUrl(orderItem.getImageUrl());
+            productForm.setQuantity(new BigDecimal(orderItem.getQuantity()));
+            productForm.setPrice(orderItem.getPrice().setScale(0));
+            productFormList.add(productForm);
+        }
 
-        ProductForm productForm = new ProductForm();
-        productForm.setId("product_id");
-        productForm.setName("烏薩奇玩偶");
-        productForm.setImageUrl("https://media.karousell.com/media/photos/products/2024/4/24/chiikawa___1713962766_66a785ab_progressive.jpg");
-        productForm.setQuantity(new BigDecimal("10"));
-        productForm.setPrice(new BigDecimal("10"));
-        productPackageForm.setProducts(Arrays.asList(productForm));
+        productPackageForm.setProducts(productFormList);
 
         form.setPackages(Arrays.asList(productPackageForm));
 
         RedirectUrls redirectUrls = new RedirectUrls();
+        // 先暫填google 可導向付款成功頁面
         redirectUrls.setConfirmUrl("https://www.google.com");
         redirectUrls.setCancelUrl("");
         form.setRedirectUrls(redirectUrls);
@@ -72,7 +76,7 @@ public class CustomerCheck {
 
             // 發送post請求
             RequestApiResponse requestApiResponseBody = PostApiUtil.sendLinePost(linePayData, requestHttpUri, objectMapper.writeValueAsString(form));
-
+            
             if (requestApiResponseBody != null) {
                 long transactionId = requestApiResponseBody.getInfo().getTransactionId();
                 confirmUri = confirmUri.replace("{transactionId}", String.valueOf(transactionId));
@@ -87,14 +91,11 @@ public class CustomerCheck {
             System.out.println("confirmNonce => " + confirmNonce);
 
 
-//            JsonNode confirmApiResponseBody = PostApiUtil.sendLinePost(linePayData, requestHttpUri, objectMapper.writeValueAsString(form));
-
-
-
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
+        return "success";
 
     }
 
@@ -105,5 +106,7 @@ public class CustomerCheck {
     public static String toBase64String(byte[] bytes) {
         return Base64.getEncoder().encodeToString(bytes);
     }
+
+
 
 }

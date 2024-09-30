@@ -14,6 +14,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +27,7 @@ public class OrderDaoImpl implements OrderDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    public Integer createOrder(Integer memberId, Integer totalAmount) {
+    public Integer createOrder(Integer memberId, BigDecimal totalAmount) {
         String sql = """
                 INSERT INTO `order`(member_id, total_amount, created_date, last_modified_date)
                 VALUES (:memberId, :totalAmount, :createdDate, :lastModifiedDate)

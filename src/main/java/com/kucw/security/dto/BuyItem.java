@@ -8,6 +8,12 @@ public class BuyItem {
     private Integer productId;
     @NotNull
     private Integer quantity;
+    @NotNull
+    private String productName;
+    @NotNull
+    private String price;
+    @NotNull
+    private String imageUrl;
 
     public Integer getProductId() {
         return productId;
@@ -23,5 +29,29 @@ public class BuyItem {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

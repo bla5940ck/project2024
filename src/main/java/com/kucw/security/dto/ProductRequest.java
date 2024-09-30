@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kucw.security.constant.ProductCategory;
 import jakarta.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
+
 public class ProductRequest {
 
     @NotNull
@@ -16,7 +18,7 @@ public class ProductRequest {
     private String imageUrl;
 
     @NotNull
-    private Integer price;
+    private BigDecimal price;
 
     @NotNull
     private Integer stock;
@@ -47,11 +49,11 @@ public class ProductRequest {
         this.imageUrl = imageUrl;
     }
 
-    public Integer getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

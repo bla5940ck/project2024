@@ -16,6 +16,8 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -72,7 +74,7 @@ public class ProductControllerTest {
         productRequest.setProductName("test food product");
         productRequest.setCategory(ProductCategory.FOOD);
         productRequest.setImageUrl("http://test.com");
-        productRequest.setPrice(100);
+        productRequest.setPrice(new BigDecimal(100));
         productRequest.setStock(2);
 
         String json = objectMapper.writeValueAsString(productRequest);
@@ -119,7 +121,7 @@ public class ProductControllerTest {
         productRequest.setProductName("test food product");
         productRequest.setCategory(ProductCategory.FOOD);
         productRequest.setImageUrl("http://test.com");
-        productRequest.setPrice(100);
+        productRequest.setPrice(new BigDecimal(100));
         productRequest.setStock(2);
 
         String json = objectMapper.writeValueAsString(productRequest);
@@ -166,7 +168,7 @@ public class ProductControllerTest {
         productRequest.setProductName("test food product");
         productRequest.setCategory(ProductCategory.FOOD);
         productRequest.setImageUrl("http://test.com");
-        productRequest.setPrice(100);
+        productRequest.setPrice(new BigDecimal(100));
         productRequest.setStock(2);
 
         String json = objectMapper.writeValueAsString(productRequest);

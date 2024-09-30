@@ -6,6 +6,7 @@ import com.kucw.security.dto.BuyItem;
 import com.kucw.security.dto.CreateOrderRequest;
 import com.kucw.security.dto.OrderQueryParams;
 import com.kucw.security.dto.ProductRequest;
+import com.kucw.security.linepay.LinePayService;
 import com.kucw.security.model.order.Order;
 import com.kucw.security.model.order.OrderItem;
 import com.kucw.security.model.product.Product;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +34,9 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private ProductDao productDao;
 
+    @Autowired
+    private LinePayService linePayService;
+
     private static final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     @Override
@@ -39,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
     public Integer createOrder(Integer memberId, CreateOrderRequest createOrderRequest) {
 
         // 總花費
-        int totalAmount = 0;
+        BigDecimal totalAmount = BigDecimal.ZERO;
 
         // 訂單細項清單
         List<OrderItem> orderItems = new ArrayList<>();
@@ -64,14 +69,17 @@ public class OrderServiceImpl implements OrderService {
             // 扣除庫存
             updateStock(buyItem, product);
 
-            int amount = buyItem.getQuantity() * product.getPrice();
-            totalAmount += amount;
+            BigDecimal amount = product.getPrice().multiply(new BigDecimal(buyItem.getQuantity()));
+            totalAmount = totalAmount.add(amount);
 
             // 購買資訊 轉換 成訂單細項
             OrderItem orderItem = new OrderItem();
             orderItem.setProductId(productId);
             orderItem.setAmount(amount);
+            orderItem.setPrice(product.getPrice());
             orderItem.setQuantity(buyItem.getQuantity());
+            orderItem.setProductName(product.getProductName());
+            orderItem.setImageUrl(product.getImageUrl());
             orderItems.add(orderItem);
         }
 
@@ -80,6 +88,9 @@ public class OrderServiceImpl implements OrderService {
 
         // 3.新增訂單細項
         orderDao.createItems(orderId, orderItems);
+
+        // 4.linePay 金流付款
+        linePayService.requestPayment(orderId, totalAmount, memberId, orderItems);
 
         return orderId;
 

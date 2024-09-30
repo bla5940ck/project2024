@@ -3,6 +3,7 @@ package com.kucw.security.model.product;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kucw.security.constant.ProductCategory;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -16,7 +17,7 @@ public class Product {
 
     private String imageUrl;
 
-    private Integer price;
+    private BigDecimal price;
 
     private Integer stock;
 
@@ -60,11 +61,11 @@ public class Product {
         this.imageUrl = imageUrl;
     }
 
-    public Integer getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

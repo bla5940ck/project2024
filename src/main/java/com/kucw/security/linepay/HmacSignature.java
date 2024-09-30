@@ -17,15 +17,16 @@ import java.util.UUID;
 public final class HmacSignature {
     private HmacSignature(){}
 
+
     public static String encrypt(final String keys, final String data) {
         return toBase64String(HmacUtils.getInitializedMac(HmacAlgorithms.HMAC_SHA_256, keys.getBytes()).doFinal(data.getBytes()));
     }
 
     public static String toBase64String(byte[] bytes) {
-        byte[] byteArray = Base64.encodeBase64(bytes, true);
-        return new String(byteArray);
+        return Base64.encodeBase64URLSafeString(bytes);
+//        byte[] byteArray = Base64.encodeBase64(bytes, false);
+//        return new String(byteArray);
     }
-
     public static void main(String[] args) {
         CheckoutPaymentRequestForm form = new CheckoutPaymentRequestForm();
 
