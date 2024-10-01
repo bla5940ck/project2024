@@ -1,6 +1,6 @@
 package com.kucw.security.linepay.model;
 
-import com.kucw.security.linepay.http.ResponseBody;
+import com.kucw.security.http.ResponseBody;
 
 public class RequestApiResponse extends ResponseBody {
     private Info info;

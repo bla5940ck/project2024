@@ -2,7 +2,7 @@ package com.kucw.security.linepay;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kucw.security.linepay.model.CheckoutPaymentRequestForm;
+import com.kucw.security.linepay.model.CheckoutPaymentRequestFormData;
 import com.kucw.security.linepay.model.ProductForm;
 import com.kucw.security.linepay.model.ProductPackageForm;
 import com.kucw.security.linepay.model.RedirectUrls;
@@ -28,7 +28,7 @@ public final class HmacSignature {
 //        return new String(byteArray);
     }
     public static void main(String[] args) {
-        CheckoutPaymentRequestForm form = new CheckoutPaymentRequestForm();
+        CheckoutPaymentRequestFormData form = new CheckoutPaymentRequestFormData();
 
 
         form.setAmount(new BigDecimal("100"));

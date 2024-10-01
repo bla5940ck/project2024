@@ -1,4 +1,4 @@
-package com.kucw.security.linepay.http;
+package com.kucw.security.http;
 
 public abstract class ResponseBody {
 

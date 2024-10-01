@@ -1,11 +1,10 @@
 package com.kucw.security.linepay;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kucw.security.linepay.model.*;
 import com.kucw.security.util.PostApiUtil;
-import com.kucw.security.util.model.LinePayData;
+import com.kucw.security.util.model.LinePayHeaderData;
 import org.apache.commons.codec.digest.HmacAlgorithms;
 import org.apache.commons.codec.digest.HmacUtils;
 import java.util.Base64;
@@ -19,7 +18,7 @@ public class CustomerCheck {
     public static void main(String[] args) {
 
         // Request API
-        CheckoutPaymentRequestForm form = new CheckoutPaymentRequestForm();
+        CheckoutPaymentRequestFormData form = new CheckoutPaymentRequestFormData();
         form.setAmount(new BigDecimal("100"));
         form.setCurrency("TWD");
         form.setOrderId("merchant_order_id1235");
@@ -52,10 +51,10 @@ public class CustomerCheck {
         ObjectMapper objectMapper = new ObjectMapper();
 
         // confirm API
-        ConfirmData confirmData = new ConfirmData();
+        ConfirmFormData confirmFormData = new ConfirmFormData();
         // amount金額的部分對應的就是Request API中這筆交易的總金額。
-        confirmData.setAmount(new BigDecimal("100"));
-        confirmData.setCurrency("TWD");
+        confirmFormData.setAmount(new BigDecimal("100"));
+        confirmFormData.setCurrency("TWD");
         String confirmNonce = UUID.randomUUID().toString();
         String confirmUri = "/v3/payments/{transactionId}/confirm";
 
@@ -65,13 +64,13 @@ public class CustomerCheck {
         try {
             // request
             String signature = encrypt(ChannelSecret,ChannelSecret + requestUri + objectMapper.writeValueAsString(form) + nonce);
-            LinePayData linePayData = new LinePayData("2006397378", nonce, signature);
+            LinePayHeaderData linePayHeaderData = new LinePayHeaderData("2006397378", nonce, signature);
             System.out.println("signature => " + signature);
             System.out.println("body => " + objectMapper.writeValueAsString(form));
             System.out.println("nonce => " + nonce);
 
             // 發送post請求
-            RequestApiResponse requestApiResponseBody = PostApiUtil.sendLinePost(linePayData, requestHttpUri, objectMapper.writeValueAsString(form));
+            RequestApiResponse requestApiResponseBody = PostApiUtil.sendLinePost(linePayHeaderData, requestHttpUri, objectMapper.writeValueAsString(form));
 
             if (requestApiResponseBody != null) {
                 long transactionId = requestApiResponseBody.getInfo().getTransactionId();
@@ -81,9 +80,9 @@ public class CustomerCheck {
             }
 
             // confirm
-            String signatureConfirm = encrypt(ChannelSecret,ChannelSecret + confirmUri + objectMapper.writeValueAsString(confirmData) + confirmNonce);
+            String signatureConfirm = encrypt(ChannelSecret,ChannelSecret + confirmUri + objectMapper.writeValueAsString(confirmFormData) + confirmNonce);
             System.out.println("signatureConfirm => " + signatureConfirm);
-            System.out.println("bodyConfirm => " + objectMapper.writeValueAsString(confirmData));
+            System.out.println("bodyConfirm => " + objectMapper.writeValueAsString(confirmFormData));
             System.out.println("confirmNonce => " + confirmNonce);
 
 

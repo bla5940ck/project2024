@@ -1,6 +1,6 @@
 package com.kucw.security.util.model;
 
-public class LinePayData {
+public class LinePayHeaderData {
 
     // 金流整合資訊 - Channel ID
     private String channelId;
@@ -35,7 +35,7 @@ public class LinePayData {
         this.signature = signature;
     }
 
-    public LinePayData(String channelId, String nonce, String signature) {
+    public LinePayHeaderData(String channelId, String nonce, String signature) {
         this.channelId = channelId;
         this.nonce = nonce;
         this.signature = signature;
