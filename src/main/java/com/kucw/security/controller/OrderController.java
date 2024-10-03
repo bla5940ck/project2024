@@ -1,6 +1,7 @@
 package com.kucw.security.controller;
 
 import com.kucw.security.dto.CreateOrderRequest;
+import com.kucw.security.dto.OrderData;
 import com.kucw.security.dto.OrderQueryParams;
 import com.kucw.security.model.order.Order;
 import com.kucw.security.service.OrderService;
@@ -24,14 +25,16 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping("/members/{memberId}/orders")
-    public ResponseEntity<Order> createOrder(@PathVariable Integer memberId,
+    public ResponseEntity<OrderData> createOrder(@PathVariable Integer memberId,
                                          @RequestBody @Valid CreateOrderRequest createOrderRequest) {
 
-        Integer orderId = orderService.createOrder(memberId, createOrderRequest);
+        OrderData orderData = orderService.createOrder(memberId, createOrderRequest);
 
-        Order order = orderService.getOrderById(orderId);
+        Order order = orderService.getOrderById(orderData.getOrderId());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(order);
+        orderData.setOrder(order);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderData);
     }
 
     @GetMapping("members/{memberId}/orders")

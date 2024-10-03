@@ -1,6 +1,6 @@
 package com.kucw.security.util.model;
 
-public class LinePayHeaderData {
+public class LinePayHeaderData extends BaseHeader{
 
     // 金流整合資訊 - Channel ID
     private String channelId;

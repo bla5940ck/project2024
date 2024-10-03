@@ -2,11 +2,9 @@ package com.kucw.security.service.impl;
 
 import com.kucw.security.dao.OrderDao;
 import com.kucw.security.dao.ProductDao;
-import com.kucw.security.dto.BuyItem;
-import com.kucw.security.dto.CreateOrderRequest;
-import com.kucw.security.dto.OrderQueryParams;
-import com.kucw.security.dto.ProductRequest;
+import com.kucw.security.dto.*;
 import com.kucw.security.linepay.LinePayService;
+import com.kucw.security.linepay.model.PaymentUrl;
 import com.kucw.security.model.order.Order;
 import com.kucw.security.model.order.OrderItem;
 import com.kucw.security.model.product.Product;
@@ -41,7 +39,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public Integer createOrder(Integer memberId, CreateOrderRequest createOrderRequest) {
+    public OrderData createOrder(Integer memberId, CreateOrderRequest createOrderRequest) {
 
         // 總花費
         BigDecimal totalAmount = BigDecimal.ZERO;
@@ -83,6 +81,7 @@ public class OrderServiceImpl implements OrderService {
             orderItems.add(orderItem);
         }
 
+        // todo 新增訂單狀態，確認已付款後才會修改狀態
         // 2.新增訂單
         Integer orderId = orderDao.createOrder(memberId, totalAmount);
 
@@ -90,9 +89,14 @@ public class OrderServiceImpl implements OrderService {
         orderDao.createItems(orderId, orderItems);
 
         // 4.linePay 金流付款
-        linePayService.requestPayment(orderId, totalAmount, memberId, orderItems);
+        PaymentUrl paymentUrl = linePayService.requestPayment(orderId, totalAmount, memberId, orderItems);
 
-        return orderId;
+        OrderData orderData = new OrderData();
+
+        orderData.setOrderId(orderId);
+        orderData.setPaymentUrl(paymentUrl);
+
+        return orderData;
 
     }
 

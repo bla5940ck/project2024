@@ -20,4 +20,7 @@ public abstract class ResponseBody {
     public void setReturnMessage(String returnMessage) {
         this.returnMessage = returnMessage;
     }
+
+    public ResponseBody() {
+    }
 }

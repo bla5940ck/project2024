@@ -70,7 +70,7 @@ public class CustomerCheck {
             System.out.println("nonce => " + nonce);
 
             // 發送post請求
-            RequestApiResponse requestApiResponseBody = PostApiUtil.sendLinePost(linePayHeaderData, requestHttpUri, objectMapper.writeValueAsString(form));
+            RequestApiResponse requestApiResponseBody = PostApiUtil.sendLinePost(linePayHeaderData, requestHttpUri, objectMapper.writeValueAsString(form), RequestApiResponse.class);
 
             if (requestApiResponseBody != null) {
                 long transactionId = requestApiResponseBody.getInfo().getTransactionId();

@@ -1,6 +1,7 @@
 package com.kucw.security.service;
 
 import com.kucw.security.dto.CreateOrderRequest;
+import com.kucw.security.dto.OrderData;
 import com.kucw.security.dto.OrderQueryParams;
 import com.kucw.security.model.order.Order;
 import com.kucw.security.util.Page;
@@ -14,7 +15,7 @@ public interface OrderService {
      * @param memberId
      * @param createOrderRequest
      * */
-    Integer createOrder(Integer memberId, CreateOrderRequest createOrderRequest);
+    OrderData createOrder(Integer memberId, CreateOrderRequest createOrderRequest);
 
     /**
      * 取得訂單(含訂單細項清單)

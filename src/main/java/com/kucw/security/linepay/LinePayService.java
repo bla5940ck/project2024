@@ -2,12 +2,15 @@ package com.kucw.security.linepay;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kucw.security.cache.CacheManager;
+import com.kucw.security.cache.model.LinePayTxData;
 import com.kucw.security.linepay.model.*;
 import com.kucw.security.model.order.OrderItem;
 import com.kucw.security.util.PostApiUtil;
 import com.kucw.security.util.model.LinePayHeaderData;
 import org.apache.commons.codec.digest.HmacAlgorithms;
 import org.apache.commons.codec.digest.HmacUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -15,11 +18,27 @@ import java.util.*;
 
 @Component
 public class LinePayService {
-    public String requestPayment(Integer orderId, BigDecimal totalAmount, Integer memberId, List<OrderItem> orderItemList) {
+
+    private final String CHANNEL_SECRET = "c0205a0b92af3fa0ed220b5f3d0af349";
+
+    @Autowired
+    private CacheManager cacheManager;
+
+
+    public PaymentUrl requestPayment(Integer orderId, BigDecimal totalAmount, Integer memberId, List<OrderItem> orderItemList) {
+
+        // 付款貨幣
+        String currency = "TWD";
+
+        // 建立快取資料
+        LinePayTxData txData = new LinePayTxData();
+        txData.setAmount(totalAmount);
+        txData.setCurrency(currency);
+
         // Request API
         CheckoutPaymentRequestFormData form = new CheckoutPaymentRequestFormData();
         form.setAmount(totalAmount.setScale(0));
-        form.setCurrency("TWD");
+        form.setCurrency(currency);
         form.setOrderId(String.valueOf(orderId));
 
         ProductPackageForm productPackageForm = new ProductPackageForm();
@@ -54,48 +73,84 @@ public class LinePayService {
         // 共用轉換
         ObjectMapper objectMapper = new ObjectMapper();
 
-        // confirm API
-        ConfirmFormData confirmFormData = new ConfirmFormData();
-        // amount金額的部分對應的就是Request API中這筆交易的總金額。
-        confirmFormData.setAmount(new BigDecimal("100"));
-        confirmFormData.setCurrency("TWD");
-        String confirmNonce = UUID.randomUUID().toString();
-        String confirmUri = "/v3/payments/{transactionId}/confirm";
-
-        String ChannelSecret = "c0205a0b92af3fa0ed220b5f3d0af349";
-
-
+        PaymentUrl paymentUrl = null;
         try {
             // request
-            String signature = encrypt(ChannelSecret,ChannelSecret + requestUri + objectMapper.writeValueAsString(form) + nonce);
+            String signature = encrypt(CHANNEL_SECRET,CHANNEL_SECRET + requestUri + objectMapper.writeValueAsString(form) + nonce);
             LinePayHeaderData linePayHeaderData = new LinePayHeaderData("2006397378", nonce, signature);
             System.out.println("signature => " + signature);
             System.out.println("body => " + objectMapper.writeValueAsString(form));
             System.out.println("nonce => " + nonce);
 
             // 發送post請求
-            RequestApiResponse requestApiResponseBody = PostApiUtil.sendLinePost(linePayHeaderData, requestHttpUri, objectMapper.writeValueAsString(form));
+            RequestApiResponse requestApiResponseBody = PostApiUtil.sendLinePost(linePayHeaderData, requestHttpUri, objectMapper.writeValueAsString(form), RequestApiResponse.class);
 
             if (requestApiResponseBody != null) {
+                paymentUrl = requestApiResponseBody.getInfo().getPaymentUrl();
                 long transactionId = requestApiResponseBody.getInfo().getTransactionId();
-                confirmUri = confirmUri.replace("{transactionId}", String.valueOf(transactionId));
+                // 資料存入快取
 
-                System.out.println(requestApiResponseBody.getInfo().getPaymentUrl().getWeb());
+                txData.setTransactionId(transactionId);
+                cacheManager.setTxData(txData, 3000);
             }
 
-            // confirm
-            String signatureConfirm = encrypt(ChannelSecret,ChannelSecret + confirmUri + objectMapper.writeValueAsString(confirmFormData) + confirmNonce);
-            System.out.println("signatureConfirm => " + signatureConfirm);
-            System.out.println("bodyConfirm => " + objectMapper.writeValueAsString(confirmFormData));
-            System.out.println("confirmNonce => " + confirmNonce);
+
 
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
-        return "success";
+        return paymentUrl;
 
+    }
+
+    public String confirmPayment() {
+
+        LinePayTxData linePayTxData = cacheManager.getTxData(LinePayTxData.class);
+        BigDecimal amount = linePayTxData.getAmount();
+        String currency = linePayTxData.getCurrency();
+
+        // confirm API
+        ConfirmFormData confirmFormData = new ConfirmFormData();
+        // amount金額的部分對應的就是Request API中這筆交易的總金額。
+        confirmFormData.setAmount(amount);
+        confirmFormData.setCurrency(currency);
+        String confirmNonce = UUID.randomUUID().toString();
+        String confirmUri = "/v3/payments/{transactionId}/confirm";
+
+        confirmUri = confirmUri.replace("{transactionId}", String.valueOf(linePayTxData.getTransactionId()));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String form = null;
+        try {
+            form = objectMapper.writeValueAsString(confirmFormData);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        // confirm
+        String signatureConfirm = encrypt(CHANNEL_SECRET,CHANNEL_SECRET + confirmUri + form + confirmNonce);
+        LinePayHeaderData linePayHeaderData = new LinePayHeaderData("2006397378", confirmNonce, signatureConfirm);
+
+        System.out.println("signatureConfirm => " + signatureConfirm);
+        System.out.println("confirmNonce => " + confirmNonce);
+
+        String confirmHttpUrl = "https://sandbox-api-pay.line.me/v3/payments/" + linePayTxData.getTransactionId() + "/confirm";
+
+        // 發送post請求
+        ConfirmApiResponse confirmApiResponse = PostApiUtil.sendLinePost(linePayHeaderData, confirmHttpUrl, form, ConfirmApiResponse.class);
+
+        if (confirmApiResponse != null) {
+            try {
+                return objectMapper.writeValueAsString(confirmApiResponse);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return null;
     }
 
     public static String encrypt(final String keys, final String data) {

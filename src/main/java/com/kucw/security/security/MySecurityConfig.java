@@ -34,20 +34,20 @@ public class MySecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         return http
-                .csrf(csrf -> csrf.disable())
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
-//                .csrf(csrf -> csrf
-//                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-//                        .csrfTokenRequestHandler(createCsrfHandler())
-//                        // csrf 忽略register,index
-//                        .ignoringRequestMatchers("/members/register", "/index", "/")
-//                        )
+//                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(createCsrfHandler())
+                        // csrf 忽略register,index
+                        .ignoringRequestMatchers("/members/register", "/index", "/")
+                        )
                 .httpBasic(Customizer.withDefaults() )
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/index").authenticated()
                         .requestMatchers("/members/register", "/products").permitAll()
                         .requestMatchers("/welcome", "/products/*", "/members/**").hasAnyRole("ADMIN", "VIP_MEMBER", "NORMAL_MEMBER")
-                        .requestMatchers("/vipUrl").hasRole("VIP_MEMBER")
+                        .requestMatchers("/vipUrl", "/linePay/confirm").hasAnyRole("VIP_MEMBER")
                                 .anyRequest().denyAll()
 //                        .anyRequest().permitAll()
                 )

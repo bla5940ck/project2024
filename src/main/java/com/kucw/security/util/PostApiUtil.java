@@ -1,6 +1,6 @@
 package com.kucw.security.util;
 
-import com.kucw.security.linepay.model.RequestApiResponse;
+import com.kucw.security.http.ResponseBody;
 import com.kucw.security.util.model.LinePayHeaderData;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,7 +14,7 @@ public class PostApiUtil {
      * @param httpsUrl    : 請求網址
      * @param requestBody
      */
-    public static RequestApiResponse sendLinePost(LinePayHeaderData linePayHeaderData, String httpsUrl, String requestBody) {
+    public static <T extends ResponseBody> T sendLinePost(LinePayHeaderData linePayHeaderData, String httpsUrl, String requestBody, Class<T> responseType) {
         RestTemplate restTemplate = new RestTemplate();
 
         // Post.Headers 設定
@@ -26,9 +26,9 @@ public class PostApiUtil {
 
         HttpEntity<String> request = new HttpEntity<String>(requestBody, headers);
 
-        RequestApiResponse responseBody = restTemplate.postForObject(httpsUrl, request, RequestApiResponse.class);
+        T response = restTemplate.postForObject(httpsUrl, request, responseType);
 
-        return responseBody;
+        return response;
     }
 
 }

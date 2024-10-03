@@ -1,5 +1,7 @@
 package com.kucw.security.controller;
 
+import com.kucw.security.linepay.LinePayService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -7,6 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class MyController {
+
+    @Autowired
+    private LinePayService linePayService;
 
     @GetMapping("/index")
     public String index(Authentication authentication) {
@@ -25,5 +30,10 @@ public class MyController {
     @PostMapping("/vipUrl")
     public String vip() {
         return "vip";
+    }
+
+    @PostMapping("/linePay/confirm")
+    public String confirmPayment() {
+        return linePayService.confirmPayment();
     }
 }
